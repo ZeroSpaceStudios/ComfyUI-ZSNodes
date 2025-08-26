@@ -7,19 +7,50 @@ Automatically installs required dependencies
 import subprocess
 import sys
 import os
+import platform
 import importlib.util
 from typing import List, Tuple
+
+def find_python_executable():
+    """Find the correct Python executable to use"""
+    # First, try to detect ComfyUI's python_embeded directory
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Navigate up to find ComfyUI root
+    comfyui_root = current_dir
+    while comfyui_root and not os.path.exists(os.path.join(comfyui_root, "main.py")):
+        parent = os.path.dirname(comfyui_root)
+        if parent == comfyui_root:  # Reached root directory
+            break
+        comfyui_root = parent
+    
+    # Check for python_embeded (Windows portable)
+    if platform.system() == "Windows":
+        python_embeded = os.path.join(comfyui_root, "python_embeded", "python.exe")
+        if os.path.exists(python_embeded):
+            print(f"📍 Found Windows portable Python: {python_embeded}")
+            return python_embeded
+        
+        # Alternative path structure
+        python_embeded_alt = os.path.join(os.path.dirname(comfyui_root), "python_embeded", "python.exe")
+        if os.path.exists(python_embeded_alt):
+            print(f"📍 Found Windows portable Python: {python_embeded_alt}")
+            return python_embeded_alt
+    
+    # Fall back to system Python
+    print(f"📍 Using system Python: {sys.executable}")
+    return sys.executable
 
 def check_package_installed(package_name: str) -> bool:
     """Check if a package is already installed"""
     spec = importlib.util.find_spec(package_name.split('[')[0].split('@')[0].split('>')[0].split('=')[0])
     return spec is not None
 
-def install_package(package: str) -> bool:
+def install_package(package: str, python_exe: str) -> bool:
     """Install a single package using pip"""
     try:
         print(f"Installing {package}...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package], 
+        subprocess.check_call([python_exe, "-m", "pip", "install", package], 
                             stdout=subprocess.DEVNULL, 
                             stderr=subprocess.STDOUT)
         print(f"✓ Successfully installed {package}")
@@ -48,6 +79,9 @@ def main():
     print("ComfyUI-ZSNodes Installation")
     print("=" * 60)
     
+    # Find the correct Python executable
+    python_exe = find_python_executable()
+    
     # Get requirements
     required_packages, optional_packages = get_requirements()
     
@@ -59,7 +93,7 @@ def main():
         if check_package_installed(package_name):
             print(f"✓ {package_name} already installed")
         else:
-            if not install_package(package):
+            if not install_package(package, python_exe):
                 failed_required.append(package)
     
     # Install optional packages (for Bounding Box Crop node)
@@ -71,7 +105,7 @@ def main():
         if check_package_installed(package_name):
             print(f"✓ {package_name} already installed")
         else:
-            if not install_package(package):
+            if not install_package(package, python_exe):
                 failed_optional.append(package)
     
     # Special handling for GroundingDINO
@@ -82,13 +116,13 @@ def main():
         print("Installing GroundingDINO (this may take a while)...")
         try:
             # First, ensure build dependencies are installed
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "wheel", "setuptools"],
+            subprocess.check_call([python_exe, "-m", "pip", "install", "wheel", "setuptools"],
                                 stdout=subprocess.DEVNULL, 
                                 stderr=subprocess.STDOUT)
             
             # Install GroundingDINO from GitHub
             subprocess.check_call([
-                sys.executable, "-m", "pip", "install",
+                python_exe, "-m", "pip", "install",
                 "git+https://github.com/IDEA-Research/GroundingDINO.git"
             ])
             print("✓ Successfully installed GroundingDINO")

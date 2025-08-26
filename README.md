@@ -41,6 +41,25 @@ The default ComfyUI Save Image node automatically adds counters and batch number
 
 ### Method 1: Automatic Installation (Recommended)
 
+**For Windows Portable ComfyUI:**
+1. Navigate to your ComfyUI custom_nodes folder:
+   ```cmd
+   cd ComfyUI_windows_portable\ComfyUI\custom_nodes
+   ```
+
+2. Clone this repository:
+   ```cmd
+   git clone https://github.com/yourusername/ComfyUI-ZSNodes
+   ```
+
+3. Run the installation script:
+   ```cmd
+   cd ComfyUI-ZSNodes
+   ..\..\..\python_embeded\python.exe install.py
+   ```
+   *Or simply double-click `install.bat` for automatic installation*
+
+**For Linux/Mac or System Python:**
 1. Navigate to your ComfyUI custom_nodes folder:
    ```bash
    cd ComfyUI/custom_nodes/
@@ -154,7 +173,8 @@ ComfyUI-ZSNodes/
 │   ├── __init__.py         # Node registration
 │   ├── custom_save_image.py # Custom save image implementation
 │   └── bounding_box_crop.py # Text-based object detection and cropping
-├── install.py              # Automatic installation script
+├── install.py              # Automatic installation script (cross-platform)
+├── install.bat             # Windows batch installer (double-click to run)
 ├── requirements.txt         # Python dependencies
 └── README.md               # This file
 ```
@@ -165,7 +185,8 @@ ComfyUI-ZSNodes/
 - **For Bounding Box Crop**: PyTorch, torchvision, GroundingDINO (optional)
   
 **Notes:**
-- The `install.py` script will automatically install all dependencies
+- The `install.py` script will automatically detect Windows portable ComfyUI and use the correct Python environment
+- On Windows, you can simply double-click `install.bat` for easy installation
 - GroundingDINO models (694MB or 938MB) will be automatically downloaded on first use
 - If GroundingDINO installation fails, the Save Image node will still work, but Bounding Box Crop will be unavailable
 
