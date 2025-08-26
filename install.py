@@ -69,7 +69,10 @@ def get_requirements() -> Tuple[List[str], List[str]]:
     optional = [
         "torch>=2.0.0",
         "torchvision>=0.15.0",
+        "opencv-python>=4.7.0",
         "safetensors>=0.3.1",
+        "huggingface-hub>=0.19.0",
+        "protobuf>=3.20.2,<6.0.0",
     ]
     
     return required, optional
@@ -114,24 +117,33 @@ def main():
         print("✓ GroundingDINO already installed")
     else:
         print("Installing GroundingDINO (this may take a while)...")
-        try:
-            # First, ensure build dependencies are installed
-            subprocess.check_call([python_exe, "-m", "pip", "install", "wheel", "setuptools"],
-                                stdout=subprocess.DEVNULL, 
-                                stderr=subprocess.STDOUT)
-            
-            # Install GroundingDINO from GitHub
-            subprocess.check_call([
-                python_exe, "-m", "pip", "install",
-                "git+https://github.com/IDEA-Research/GroundingDINO.git"
-            ])
-            print("✓ Successfully installed GroundingDINO")
-        except subprocess.CalledProcessError as e:
-            print(f"⚠ GroundingDINO installation failed: {e}")
-            print("  The Bounding Box Crop node will not be available.")
-            print("  You can try installing it manually later with:")
-            print("  pip install git+https://github.com/IDEA-Research/GroundingDINO.git")
-            failed_optional.append("groundingdino")
+        
+        # Try pip version first (easier to install)
+        print("  Trying groundingdino-py package...")
+        if install_package("groundingdino-py>=0.4.0", python_exe):
+            print("✓ Successfully installed GroundingDINO (pip version)")
+        else:
+            # Fall back to GitHub version if pip version fails
+            print("  Pip version failed, trying GitHub version...")
+            try:
+                # First, ensure build dependencies are installed
+                subprocess.check_call([python_exe, "-m", "pip", "install", "wheel", "setuptools"],
+                                    stdout=subprocess.DEVNULL, 
+                                    stderr=subprocess.STDOUT)
+                
+                # Install GroundingDINO from GitHub
+                subprocess.check_call([
+                    python_exe, "-m", "pip", "install",
+                    "git+https://github.com/IDEA-Research/GroundingDINO.git"
+                ])
+                print("✓ Successfully installed GroundingDINO (GitHub version)")
+            except subprocess.CalledProcessError as e:
+                print(f"⚠ GroundingDINO installation failed: {e}")
+                print("  The Bounding Box Crop node will not be available.")
+                print("  You can try installing manually with either:")
+                print("    pip install groundingdino-py>=0.4.0")
+                print("    pip install git+https://github.com/IDEA-Research/GroundingDINO.git")
+                failed_optional.append("groundingdino")
     
     # Summary
     print("\n" + "=" * 60)
