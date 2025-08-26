@@ -39,44 +39,8 @@ The default ComfyUI Save Image node automatically adds counters and batch number
 
 ## Installation
 
-### Method 1: Automatic Installation (Recommended)
-
-**For Windows Portable ComfyUI:**
-1. Navigate to your ComfyUI custom_nodes folder:
-   ```cmd
-   cd ComfyUI_windows_portable\ComfyUI\custom_nodes
-   ```
-
-2. Clone this repository:
-   ```cmd
-   git clone https://github.com/yourusername/ComfyUI-ZSNodes
-   ```
-
-3. Run the installation script:
-   ```cmd
-   cd ComfyUI-ZSNodes
-   ..\..\..\python_embeded\python.exe install.py
-   ```
-   *Or simply double-click `install.bat` for automatic installation*
-
-**For Linux/Mac or System Python:**
-1. Navigate to your ComfyUI custom_nodes folder:
-   ```bash
-   cd ComfyUI/custom_nodes/
-   ```
-
-2. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/ComfyUI-ZSNodes
-   ```
-
-3. Run the installation script:
-   ```bash
-   cd ComfyUI-ZSNodes
-   python install.py
-   ```
-
-4. Restart ComfyUI
+### Method 1: ComfyUI Manager (Recommended)
+If you have ComfyUI Manager installed, search for "ComfyUI-ZSNodes" and install directly through the manager interface.
 
 ### Method 2: Manual Installation
 
@@ -90,17 +54,20 @@ The default ComfyUI Save Image node automatically adds counters and batch number
    git clone https://github.com/yourusername/ComfyUI-ZSNodes
    ```
 
-3. Install requirements manually:
+3. Install dependencies:
    ```bash
    cd ComfyUI-ZSNodes
    pip install -r requirements.txt
    ```
+   
+   **For Windows Portable ComfyUI**, use the embedded Python:
+   ```cmd
+   ..\..\..\python_embeded\python.exe -m pip install -r requirements.txt
+   ```
 
 4. Restart ComfyUI
 
-### Method 3: ComfyUI Manager
-
-If you have ComfyUI Manager installed, it will automatically handle the dependencies when you install this node pack through the manager interface.
+**Note**: ComfyUI will often automatically install missing dependencies from requirements.txt when you first load the nodes.
 
 ## Usage
 
@@ -173,8 +140,6 @@ ComfyUI-ZSNodes/
 │   ├── __init__.py         # Node registration
 │   ├── custom_save_image.py # Custom save image implementation
 │   └── bounding_box_crop.py # Text-based object detection and cropping
-├── install.py              # Automatic installation script (cross-platform)
-├── install.bat             # Windows batch installer (double-click to run)
 ├── requirements.txt         # Python dependencies
 └── README.md               # This file
 ```
@@ -182,11 +147,10 @@ ComfyUI-ZSNodes/
 ## Dependencies
 
 - **Basic Requirements**: Pillow, numpy (required for all nodes)
-- **For Bounding Box Crop**: PyTorch, torchvision, GroundingDINO (optional)
+- **For Bounding Box Crop**: PyTorch, torchvision, opencv-python, huggingface-hub, protobuf, GroundingDINO (optional)
   
 **Notes:**
-- The `install.py` script will automatically detect Windows portable ComfyUI and use the correct Python environment
-- On Windows, you can simply double-click `install.bat` for easy installation
+- ComfyUI will automatically try to install missing dependencies from `requirements.txt`
 - GroundingDINO models (694MB or 938MB) will be automatically downloaded on first use
 - If GroundingDINO installation fails, the Save Image node will still work, but Bounding Box Crop will be unavailable
 
