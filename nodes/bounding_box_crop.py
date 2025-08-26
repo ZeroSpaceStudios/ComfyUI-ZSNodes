@@ -20,7 +20,32 @@ except ImportError:
     GROUNDINGDINO_AVAILABLE = False
     print("Warning: GroundingDINO not available. DINO Crop node will not work.")
 
-from AILab_ImageMaskTools import pil2tensor, tensor2pil
+# Utility functions (previously from AILab_ImageMaskTools)
+def pil2tensor(image):
+    """Convert PIL Image to tensor"""
+    import torch
+    import numpy as np
+    return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
+
+def tensor2pil(tensor):
+    """Convert tensor to PIL Image"""
+    from PIL import Image
+    import numpy as np
+    # Remove batch dimension if present
+    if len(tensor.shape) == 4:
+        tensor = tensor[0]
+    # Convert to numpy and scale to 0-255
+    if len(tensor.shape) == 3:
+        np_image = (tensor.permute(2, 0, 1).cpu().numpy() * 255).astype(np.uint8)
+        if np_image.shape[0] == 1:
+            return Image.fromarray(np_image[0], mode='L')
+        elif np_image.shape[0] == 3:
+            return Image.fromarray(np_image.transpose(1, 2, 0), mode='RGB')
+        elif np_image.shape[0] == 4:
+            return Image.fromarray(np_image.transpose(1, 2, 0), mode='RGBA')
+    else:
+        np_image = (tensor.cpu().numpy() * 255).astype(np.uint8)
+        return Image.fromarray(np_image)
 
 # GroundingDINO model definitions
 DINO_MODELS = {
