@@ -1,6 +1,15 @@
+# Basic requirements for all nodes
 Pillow>=9.0.0
-numpy>=1.19.0
+numpy>=1.21.0
+
+# For Bounding Box Crop node
 torch>=2.0.0
 torchvision>=0.15.0
+opencv-python>=4.7.0
 safetensors>=0.3.1
-groundingdino @ git+https://github.com/IDEA-Research/GroundingDINO.git
+huggingface-hub>=0.19.0
+protobuf>=3.20.2,<6.0.0
+
+# GroundingDINO - install via pip or from source
+groundingdino-py>=0.4.0
+# Alternative: groundingdino @ git+https://github.com/IDEA-Research/GroundingDINO.git
